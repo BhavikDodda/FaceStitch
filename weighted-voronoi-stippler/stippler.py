@@ -46,6 +46,7 @@ import os.path
 import scipy.ndimage
 import imageio.v2 as imageio
 import numpy as np
+import json
 
 def normalize(D):
     Vmin, Vmax = D.min(), D.max()
@@ -149,6 +150,9 @@ if __name__ == '__main__':
     parser.add_argument('--save_stippling_animation', action='store_true', 
                         default=default["save_animation"], 
                         help='Saves the animation of the weighted voronoi algorithm which shows the stippling dots moving into position')
+    parser.add_argument('--json', action='store_true', 
+                    default=False, 
+                    help='Save points as JSON file')
     args = parser.parse_args()
 
     filename = args.filename
@@ -230,13 +234,16 @@ if __name__ == '__main__':
                 
                 tspfileheader = "NAME : " + filename + "\nTYPE : TSP\nCOMMENT: Stipple of " + filename + " with " + str(len(points)) + " points\nDIMENSION: " + str(len(points)) + "\nEDGE_WEIGHT_TYPE: ATT\nNODE_COORD_SECTION"
                 nodeindexes = np.arange(1,len(points)+1)[:,np.newaxis]
-                np.savetxt(dat_filename, np.concatenate((nodeindexes,points),axis=1), ['%d','%d','%d'], header=tspfileheader, comments='')
                 if (args.pdf): 
                     plt.savefig(pdf_filename)
                 if (args.png):
                     plt.savefig(png_filename)
                 if (args.npy):
                     np.save(dat_filename, points)
+                if (args.json):
+                    with open("2points.json", 'w') as f:
+                        json.dump(points.tolist(), f)
+
 
         bar = tqdm.tqdm(total=args.n_iter)
         animation = FuncAnimation(fig, update,
@@ -271,13 +278,15 @@ if __name__ == '__main__':
         if not os.path.exists(dat_filename) or args.save:
             tspfileheader = "NAME : " + filename + "\nTYPE : TSP\nCOMMENT: Stipple of " + filename + " with " + str(len(points)) + " points\nDIMENSION: " + str(len(points)) + "\nEDGE_WEIGHT_TYPE: ATT\nNODE_COORD_SECTION"
             nodeindexes = np.arange(1,len(points)+1)[:,np.newaxis]
-            np.savetxt(dat_filename, np.concatenate((nodeindexes,points),axis=1), ['%d','%d','%d'], header=tspfileheader, comments='')
             if (args.npy):
                 np.save(dat_filename, points)
             if (args.pdf):
                 plt.savefig(pdf_filename)
             if (args.png):
                 plt.savefig(png_filename)
+            if (args.json):
+                with open("2points.json", 'w') as f:
+                    json.dump(points.tolist(), f)
 
         if args.display:
             plt.show()

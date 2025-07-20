@@ -10,7 +10,8 @@
 <body>
   <h2>Face Stitching</h2>
   <input type="file" id="imgInput" />
-  <button onclick="sendImage()">Upload</button>
+  <button onclick="sendImage()">MacQueen Tractor Beam Stippling</button>
+  <button onclick="sendImage2()">Weighted Voronoi Stippling</button>
   <p>Stippled Points:</p>
   <canvas id="canvas" width="500" height="500"></canvas><br>
   <button id="routeBtn">Calculate Route</button><br><br>
@@ -23,6 +24,21 @@
       formData.append('image', file);
 
       const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const points = await res.json();
+      drawPoints(points);
+    }
+
+    async function sendImage2() {
+      const input = document.getElementById('imgInput');
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch('/upload2', {
         method: 'POST',
         body: formData
       });

@@ -8,6 +8,7 @@ import random
 import subprocess
 from scipy.spatial import KDTree
 from pyembroidery import EmbPattern, STITCH, END, write_dst
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -65,6 +66,53 @@ def upload():
     with open('2points.json', 'w') as f:
         json.dump(points, f)
 
+    # Clear the upload folder
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}. Reason: {e}")
+    return jsonify(points)
+
+@app.route('/upload2', methods=['POST'])
+def upload2():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image uploaded'}), 400
+
+    image = request.files['image']
+    filepath = os.path.join(UPLOAD_FOLDER, image.filename)
+    image.save(filepath)
+
+    
+    cmd = sys.executable
+    # Total number of points to stipple your image with
+    NUMBER_OF_POINTS = 10000
+
+
+    full_command = f" weighted-voronoi-stippler/stippler.py {filepath} --json --save --n_point {NUMBER_OF_POINTS}"
+
+    os.system(cmd + full_command)
+    with open("2points.json", "r") as f:
+        points = json.load(f)
+    
+    points = np.array(points)
+    # Get original image dimensions (max X and Y values)
+    original_width = points[:, 0].max()  # Now works since points is a NumPy array
+    original_height = points[:, 1].max()
+    # Rescale to 500x500
+    scale_x = 500 / original_width
+    scale_y = 500 / original_height
+    points[:, 0] *= scale_x  # Rescale X
+    points[:, 1] *= scale_y  # Rescale Y
+    # Flip Y-coordinate (so Y=0 is top instead of bottom)
+    points[:, 1] = 500 - points[:, 1]
+    points=points.tolist()
+    with open("2points.json", "w") as f:
+        json.dump(points, f)
+    
+    print(len(points))
     # Clear the upload folder
     for filename in os.listdir(UPLOAD_FOLDER):
         file_path = os.path.join(UPLOAD_FOLDER, filename)

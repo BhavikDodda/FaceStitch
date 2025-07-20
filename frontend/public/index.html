@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stippling</title>
+  <style>
+    canvas { border: 1px solid #ccc; }
+    body { font-family: Arial; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <h2>Face Stitching</h2>
+  <input type="file" id="imgInput" />
+  <button onclick="sendImage()">Upload</button>
+  <p>Stippled Points:</p>
+  <canvas id="canvas" width="500" height="500"></canvas><br>
+  <button id="routeBtn">Calculate Route</button><br><br>
+  <button id="downloadDstBtn">Download DST File</button>
+  <script>
+    async function sendImage() {
+      const input = document.getElementById('imgInput');
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const points = await res.json();
+      drawPoints(points);
+    }
+
+    function drawPoints(points) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'black';
+      points.forEach(pt => {
+        ctx.fillRect(pt[0], pt[1], 1, 1);
+      });
+    }
+    function drawPath(points, path) {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+      // Draw path
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      const start = points[path[0]-1];
+      ctx.moveTo(start[0], start[1]);
+
+      for (let i = 0; i < path.length; i++) {
+        const pt = points[path[i]-1];
+        ctx.lineTo(pt[0], pt[1]);
+      }
+
+      // Optionally return to start to complete the loop
+      ctx.lineTo(start[0], start[1]);
+      ctx.stroke();
+    }
+
+
+
+    document.getElementById('routeBtn').addEventListener('click', async () => {
+      const response = await fetch('http://127.0.0.1:5000/calculate-route', {
+        method: 'POST',
+      });
+      const dataOutput = await response.json();
+      var path = dataOutput.path
+      var points = dataOutput.points;
+      console.log("TSP route:", path);
+      console.log("points ",points)
+      drawPath(points, path);
+    });
+
+    document.getElementById('downloadDstBtn').addEventListener('click', () => {
+      window.location.href = 'http://127.0.0.1:5000/download-dst';
+    });
+  </script>
+</body>
+</html>

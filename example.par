@@ -2,4 +2,4 @@ PROBLEM_FILE = cities.tsp
 OUTPUT_TOUR_FILE = example.tour
 TRACE_LEVEL = 1
 MAX_TRIALS = 50
-RUNS = 10
+RUNS = 1

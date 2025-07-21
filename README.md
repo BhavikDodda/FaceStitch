@@ -4,11 +4,15 @@ Transform images into beautiful embroidery designs using a single continuous lin
 
 ## Inspiration
 
-This project is inspired by the [Mona Lisa TSP Challenge](https://www.math.uwaterloo.ca/tsp/data/ml/monalisa.html), which explores creative intersections of math and art.
+This project is inspired by the [Mona Lisa TSP Challenge](https://www.math.uwaterloo.ca/tsp/data/ml/monalisa.html)
 
 ## Overview
 
-**FaceStitch** converts an image into a list of points (stippling), then finds an optimal or near-optimal path through those points using the Travelling Salesman Problem (TSP) heuristic. The result can be plotted or stitched as a single continuous line, perfect for embroidery machines.
+**FaceStitch** converts an image into a list of points (stippling), then finds an optimal or near-optimal path through those points using the Lin Kernighan Heuristic (LKH). The result can be plotted or stitched as a single continuous line, perfect for embroidery machines.
+
+Example: 
+
+<img width="152" height="152" alt="image" src="https://github.com/user-attachments/assets/41920208-dc46-4758-be36-5ce3bd47db48" />
 
 ## How It Works
 
@@ -19,7 +23,7 @@ This project is inspired by the [Mona Lisa TSP Challenge](https://www.math.uwate
    The [LKH algorithm](https://en.wikipedia.org/wiki/Lin%E2%80%93Kernighan_heuristic) is employed to find an efficient route through the points, minimizing total distance.
 
 3. **Embroidery Output:**  
-   The computed path is exported in a format compatible with embroidery machines (e.g., `.dst` file).
+   The computed path is exported in a format compatible with [embroidery machines](https://www.brother.in/en/sewing-machines) (e.g., `.dst` file).
 
 ## Getting Started
 
@@ -73,9 +77,9 @@ git clone https://github.com/BhavikDodda/FaceStitch.git
 
 > **Tip:** Wait a minute between steps if the output does not appear immediately.
 
-## Output
+### Output
 
-<!-- Add example images or output .dst visualizations here -->
+<img width="418" height="452" alt="image" src="https://github.com/user-attachments/assets/83aad06a-4124-46f8-8c8a-a3fe74c1a697" /> <img width="420" height="454" alt="image" src="https://github.com/user-attachments/assets/1e39080c-e930-4fa9-bbf9-b2c126c2aa65" />
 
 ## Resources
 
@@ -84,6 +88,4 @@ git clone https://github.com/BhavikDodda/FaceStitch.git
 
 ## Contributing
 
-The site and code are under active development! Contributions, feature requests, and ideas are welcome—feel free to open an issue or pull request.
-
-Let me know if you'd like me to further tailor or clarify any section!
+The site and code are under active development! Contributions, feature requests, and ideas are welcome. Feel free to open an issue or a pull request.

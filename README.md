@@ -1,74 +1,89 @@
-# Goal
+# FaceStitch
 
-To convert an image into an embroidery using a single continuous line.
-
-Example: 
-
-<img width="152" height="152" alt="image" src="https://github.com/user-attachments/assets/41920208-dc46-4758-be36-5ce3bd47db48" />
+Transform images into beautiful embroidery designs using a single continuous line.
 
 ## Inspiration
 
-This project is inspired by the Mona Lisa TSP Challenge: https://www.math.uwaterloo.ca/tsp/data/ml/monalisa.html
+This project is inspired by the [Mona Lisa TSP Challenge](https://www.math.uwaterloo.ca/tsp/data/ml/monalisa.html), which explores creative intersections of math and art.
 
-# Procedure
+## Overview
 
-1. Convert the image into a list of points. This process is calling **stippling**. Types:
-   - MacQueen Tractor Beam Stippling
-   - Weighted Voronoi Stippling
-2. Apply the [TSP](https://en.wikipedia.org/wiki/Travelling_salesman_problem) algorithm on the list of points to find the path/route through them.
+**FaceStitch** converts an image into a list of points (stippling), then finds an optimal or near-optimal path through those points using the Travelling Salesman Problem (TSP) heuristic. The result can be plotted or stitched as a single continuous line, perfect for embroidery machines.
 
-Since TSP is an NP-hard problem, this means that it's very computationally expensive and we would therefore need to use a heuristic algorithm. Here, we'll use the [LKH](https://en.wikipedia.org/wiki/Lin%E2%80%93Kernighan_heuristic) algorithm which finds a sub-optimal solution (path).
-This is good enough for our use case.
+## How It Works
 
-# Execute
+1. **Image to Points (Stippling):**  
+   The image is processed to extract feature points using either MacQueen Tractor Beam Stippling or Weighted Voronoi Stippling.
 
-In your cmd terminal run the following command to clone this repository:
+2. **Route Optimization (TSP):**  
+   The [LKH algorithm](https://en.wikipedia.org/wiki/Lin%E2%80%93Kernighan_heuristic) is employed to find an efficient route through the points, minimizing total distance.
 
-```cmd
+3. **Embroidery Output:**  
+   The computed path is exported in a format compatible with embroidery machines (e.g., `.dst` file).
+
+## Getting Started
+
+Clone the repository:
+
+```bash
 git clone https://github.com/BhavikDodda/FaceStitch.git
 ```
 
-## Manual Method
+### **Manual Method**
 
-1. Save your image in the `input` folder.
-2. Set `ORIGINAL_IMAGE` in `1stippling.py` to the file path of the image from step 1, and execute it to generate the stippling points which will be exported to `2points.json`.
-3. Now to generate a .tsp file from 2points.json, execute `3gentsp.py`. This will create `cities.tsp` in the root of the same folder.
-4. The `cities.tsp` file can be used to compute the LKH route through the points/cities. Two methods:
-   - Run `4lkhpy.py` to generate `4path.json` containing the LKH route.
-   - (OR) Open the `cities.tsp` file on [Concorde](https://www.math.uwaterloo.ca/tsp/concorde/index.html), go to `Heuristics` and select 'Lin Kernighan' to compute the path. To export the path: File->Save Tour.
-5. To stitch the image on [Brother sewing machine](https://www.brother.in/en/sewing-machines) you would need a .dst file. In cmd, running `python 5dstgen.py "2points.json" "4path.json"` generates a `5output.dst` which can be imported to the stitching machine.
+1. **Prepare Image:**
+   - Save your image in the `input` folder.
 
-## Faster Method
+2. **Stippling:**
+   - Set `ORIGINAL_IMAGE` in `1stippling.py` to the image path, then run the script to produce `2points.json`.
 
-This relies on the Node.js+Flask website created to generate the stippling, LKH path and .dst file. It's therefore limited to what I've incorported.
+3. **TSP Conversion:**
+   - Run `3gentsp.py` to convert `2points.json` into `cities.tsp`.
 
-- First run the following to enable the backend server
-```cmd
-python backend/app.py
-```
-- Open another terminal in the same root and run this parallelly for the site
-```cmd
-node frontend/server.js
-```
-You should see the following message:
-`Server running on http://localhost:3000`
+4. **Calculate Path:**
+   - Option 1: Run `4lkhpy.py` to generate `4path.json` (the LKH route).
+   - Option 2: Use [Concorde Solver](https://www.math.uwaterloo.ca/tsp/concorde/index.html). Load `cities.tsp`, choose 'Lin Kernighan' under Heuristics, and export the path via File → Save Tour.
 
-- Now visit `http://localhost:3000`, upload your image, choose one of the Stippling algorithms, calculate the route, and finally download the .dst file!
+5. **Create Embroidery File:**
+   - Run the following command to generate a `.dst` file for your stitching machine:
+   ```bash
+   python 5dstgen.py "2points.json" "4path.json"
+   # Output: 5output.dst
+   ```
 
-(If you don't see the output right away, make sure to wait a couple of minutes before each step)
+### **Faster Web-Based Method**
 
-### Output
+*This method requires Node.js and Flask.*
 
-<img width="418" height="452" alt="image" src="https://github.com/user-attachments/assets/83aad06a-4124-46f8-8c8a-a3fe74c1a697" /> <img width="420" height="454" alt="image" src="https://github.com/user-attachments/assets/1e39080c-e930-4fa9-bbf9-b2c126c2aa65" />
+1. Start the backend server:
 
+   ```bash
+   python backend/app.py
+   ```
 
+2. In a new terminal, start the frontend server:
 
+   ```bash
+   node frontend/server.js
+   ```
 
-# Additional Comments
+3. Open your browser and visit [http://localhost:3000](http://localhost:3000).
 
-The site is still under development, so feel free to contribute to the project!
+4. Upload your image and process it via the web interface to obtain the `.dst` file.
 
-# Resources
+> **Tip:** Wait a minute between steps if the output does not appear immediately.
 
-- "Opt Art: From Mathematical Optimization to Visual Design" book by Robert Bosch
-- Concorde Solver
+## Output
+
+<!-- Add example images or output .dst visualizations here -->
+
+## Resources
+
+- "Opt Art: From Mathematical Optimization to Visual Design" by Robert Bosch
+- [Concorde TSP Solver](https://www.math.uwaterloo.ca/tsp/concorde/index.html)
+
+## Contributing
+
+The site and code are under active development! Contributions, feature requests, and ideas are welcome—feel free to open an issue or pull request.
+
+Let me know if you'd like me to further tailor or clarify any section!
